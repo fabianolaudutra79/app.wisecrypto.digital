@@ -1,0 +1,43 @@
+services:
+  evo_api:
+    container_name: evolution_api_aula
+    image: atendai/evolution-api:v2.2.0
+    restart: always
+    ports:
+      - 8088:8080
+    volumes:
+      - evolution_api_aula:/evolution/instances
+    networks:
+      - evolution-net
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: typebot
+      POSTGRES_DB: evolution_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - evolution-net
+      - default
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6388:6379"
+    networks:
+      - evolution-net
+      - default
+
+volumes:
+  evolution_api_aula:
+  pg_data:
+
+networks:
+  evolution-net:
+    driver: bridge
